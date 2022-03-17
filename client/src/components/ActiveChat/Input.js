@@ -34,7 +34,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
       conversationId,
       sender: conversationId ? null : user,
     };
-    postMessage(reqBody);
+    await postMessage(reqBody);
     setText('');
   };
 
