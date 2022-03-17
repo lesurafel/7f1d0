@@ -18,7 +18,7 @@ const Routes = (props) => {
   const login = async (credentials) => {
     try {
       const { data } = await axios.post('/auth/login', credentials);
-      await localStorage.setItem('messenger-token', data.token);
+      localStorage.setItem('messenger-token', data.token);
       setUser(data);
       socket.emit('go-online', data.id);
     } catch (error) {
@@ -30,7 +30,7 @@ const Routes = (props) => {
   const register = async (credentials) => {
     try {
       const { data } = await axios.post('/auth/register', credentials);
-      await localStorage.setItem('messenger-token', data.token);
+      localStorage.setItem('messenger-token', data.token);
       setUser(data);
       socket.emit('go-online', data.id);
     } catch (error) {
@@ -42,7 +42,7 @@ const Routes = (props) => {
   const logout = async (id) => {
     try {
       await axios.delete('/auth/logout');
-      await localStorage.removeItem('messenger-token');
+      localStorage.removeItem('messenger-token');
       setUser({});
       socket.emit('logout', id);
     } catch (error) {

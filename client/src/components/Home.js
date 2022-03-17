@@ -62,17 +62,18 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage = async (body) => {
     try {
       const data = saveMessage(body);
+      const { message, sender = null } = await data;
 
       if (!body.conversationId) {
-        addNewConvo(body.recipientId, data.message);
+        addNewConvo(body.recipientId, message);
       } else {
-        addMessageToConversation(data);
+        addMessageToConversation({ message, sender });
       }
 
-      sendMessage(data, body);
+      sendMessage({ message, sender }, body);
     } catch (error) {
       console.error(error);
     }
@@ -80,14 +81,15 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
+      const newConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
           convo.id = message.conversationId;
         }
+        return convo;
       });
-      setConversations(conversations);
+      setConversations(newConversations);
     },
     [setConversations, conversations]
   );
@@ -106,13 +108,14 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
 
-      conversations.forEach((convo) => {
+      const newConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
         }
+        return convo;
       });
-      setConversations(conversations);
+      setConversations(newConversations);
     },
     [setConversations, conversations]
   );
@@ -181,11 +184,13 @@ const Home = ({ user, logout }) => {
 
   useEffect(() => {
     const fetchConversations = async () => {
-      try {
-        const { data } = await axios.get('/api/conversations');
-        setConversations(data);
-      } catch (error) {
-        console.error(error);
+      if (user && user.id) {
+        try {
+          const { data } = await axios.get('/api/conversations');
+          setConversations(data);
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
     if (!user.isFetching) {
@@ -193,9 +198,9 @@ const Home = ({ user, logout }) => {
     }
   }, [user]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     if (user && user.id) {
-      await logout(user.id);
+      logout(user.id);
     }
   };
 
