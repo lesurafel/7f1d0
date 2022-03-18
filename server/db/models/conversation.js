@@ -1,8 +1,8 @@
-const Sequelize = require('sequelize');
-const { Op } = require('sequelize');
-const db = require('../db');
+const Sequelize = require("sequelize");
+const { Op } = require("sequelize");
+const db = require("../db");
 
-const Conversation = db.define('conversation', {
+const Conversation = db.define("conversation", {
   user1Id: {
     type: Sequelize.INTEGER,
     allowNull: false,
