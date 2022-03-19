@@ -23,7 +23,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
     setText(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formElements = form.elements;
@@ -34,7 +34,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
       conversationId,
       sender: conversationId ? null : user,
     };
-    postMessage(reqBody);
+    await postMessage(reqBody);
     setText('');
   };
 
