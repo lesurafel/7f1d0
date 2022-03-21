@@ -79,6 +79,25 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const updateUnreadMessage = async (conversation) => {
+    await axios.patch('/api/messages', {
+      conversationId: conversation.id,
+      senderId: conversation.otherUser.id,
+    });
+
+    setConversations((prev) =>
+      prev.map((convo) => {
+        if (convo.id === conversation.id && convo.unreadMessages) {
+          const convoCopy = { ...convo };
+          convoCopy.unreadMessages = 0;
+          return convoCopy;
+        } else {
+          return convo;
+        }
+      })
+    );
+  };
+
   const addNewConvo = useCallback(
     (recipientId, message) => {
       setConversations((prev) =>
@@ -88,6 +107,7 @@ const Home = ({ user, logout }) => {
             convoCopy.messages = [...convoCopy.messages, message];
             convoCopy.latestMessageText = message.text;
             convoCopy.id = message.conversationId;
+            convoCopy.unreadMessages += 1;
             return convoCopy;
           } else {
             return convo;
@@ -118,6 +138,7 @@ const Home = ({ user, logout }) => {
             const convoCopy = { ...convo };
             convoCopy.messages = [...convoCopy.messages, message];
             convoCopy.latestMessageText = message.text;
+            convoCopy.unreadMessages += 1;
             return convoCopy;
           } else {
             return convo;
@@ -221,6 +242,7 @@ const Home = ({ user, logout }) => {
           clearSearchedUsers={clearSearchedUsers}
           addSearchedUsers={addSearchedUsers}
           setActiveChat={setActiveChat}
+          updateUnreadMessage={updateUnreadMessage}
         />
         <ActiveChat
           activeConversation={activeConversation}

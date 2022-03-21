@@ -26,7 +26,7 @@ router.post("/", async (req, res, next) => {
       // create conversation
       conversation = await Conversation.create({
         user1Id: senderId,
-        user2Id: recipientId,
+        user2Id: recipientId
       });
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
@@ -35,9 +35,33 @@ router.post("/", async (req, res, next) => {
     const message = await Message.create({
       senderId,
       text,
-      conversationId: conversation.id,
+      conversationId: conversation.id
     });
     res.json({ message, sender });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update all unread message to read for active conversation.
+router.patch("/", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { conversationId, senderId } = req.body;
+
+    const messages = await Message.update(
+      { receiverHasRead: true },
+      {
+        where: {
+          conversationId,
+          senderId,
+          receiverHasRead: false
+        }
+      }
+    );
+    return res.sendStatus(204);
   } catch (error) {
     next(error);
   }
