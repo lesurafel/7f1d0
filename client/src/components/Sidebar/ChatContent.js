@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Badge, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -19,17 +19,13 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.17,
   },
   unreadMessages: {
-    component: 'div',
-    display: 'flex',
     backgroundColor: '#6366f1',
-    color: '#f8fafc',
-    borderRadius: '50%',
-    padding: 10,
-    marginRight: 10,
-    width: 25,
-    height: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    color: '#ffffff',
+    marginRight: 25,
+  },
+  unreadMessagesPreviewText: {
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 }));
 
@@ -46,14 +42,27 @@ const ChatContent = ({ conversation, openedChatUser }) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography
+          className={
+            conversation.id &&
+            unreadMessages !== 0 &&
+            conversation.otherUser.id !== openedChatUser
+              ? classes.unreadMessagesPreviewText
+              : classes.previewText
+          }
+        >
           {latestMessageText}
         </Typography>
       </Box>
       {conversation.id &&
         unreadMessages !== 0 &&
         conversation.otherUser.id !== openedChatUser && (
-          <Box className={classes.unreadMessages}>{unreadMessages}</Box>
+          <Box>
+            <Badge
+              classes={{ badge: classes.unreadMessages }}
+              badgeContent={unreadMessages}
+            ></Badge>
+          </Box>
         )}
     </Box>
   );
