@@ -51,7 +51,7 @@ router.patch("/", async (req, res, next) => {
 		// protect the route against unauthorized users
 		const conversation = await Conversation.findConversation(req.user.id, senderId);
 		if (conversation.id !== conversationId) {
-			return res.sendStatus(404);
+			return res.sendStatus(403);
 		}
 
 		const messages = await Message.update(
