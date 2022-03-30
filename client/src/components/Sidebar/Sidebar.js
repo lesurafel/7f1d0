@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Search, Chat, CurrentUser } from './index';
@@ -24,8 +24,10 @@ const Sidebar = ({
   conversations = [],
   user,
   setActiveChat,
+  updateUnreadMessage,
 }) => {
   const classes = useStyles();
+  const openedChatUser = useRef('');
 
   return (
     <Box className={classes.root}>
@@ -42,6 +44,8 @@ const Sidebar = ({
               conversation={conversation}
               key={conversation.otherUser.username}
               setActiveChat={setActiveChat}
+              updateUnreadMessage={updateUnreadMessage}
+              openedChatUser={openedChatUser}
             />
           );
         })}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,11 +17,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = ({ conversation, setActiveChat }) => {
+const Chat = ({
+  conversation,
+  setActiveChat,
+  updateUnreadMessage,
+  openedChatUser,
+}) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
+  useEffect(() => {
+    if (
+      conversation.unreadMessages &&
+      openedChatUser.current === conversation.otherUser.id
+    ) {
+      updateUnreadMessage(conversation);
+    }
+  }, [conversation, openedChatUser, updateUnreadMessage]);
+
   const handleClick = async (conversation) => {
+    openedChatUser.current = conversation.otherUser.id;
+    if (conversation.unreadMessages) {
+      updateUnreadMessage(conversation);
+    }
     await setActiveChat(conversation.otherUser.username);
   };
 
@@ -33,7 +51,10 @@ const Chat = ({ conversation, setActiveChat }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent
+        conversation={conversation}
+        openedChatUser={openedChatUser.current}
+      />
     </Box>
   );
 };
