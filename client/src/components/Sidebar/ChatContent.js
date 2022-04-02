@@ -46,6 +46,7 @@ const ChatContent = ({ conversation, openedChatUser }) => {
           className={
             conversation.id &&
             unreadMessages !== 0 &&
+            !conversation.groupConversation &&
             conversation.otherUser.id !== openedChatUser
               ? classes.unreadMessagesPreviewText
               : classes.previewText
@@ -56,7 +57,8 @@ const ChatContent = ({ conversation, openedChatUser }) => {
       </Box>
       {conversation.id &&
         unreadMessages !== 0 &&
-        conversation.otherUser.id !== openedChatUser && (
+        conversation.otherUser.id !== openedChatUser &&
+        !conversation.groupConversation && (
           <Box>
             <Badge
               classes={{ badge: classes.unreadMessages }}

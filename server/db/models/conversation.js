@@ -1,25 +1,29 @@
+const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const db = require("../db");
 const Message = require("./message");
 
-const Conversation = db.define("conversation", {});
+const Conversation = db.define("conversation", {
+	users: {
+		type: Sequelize.STRING,
+		unique: true,
+		set(value) {
+			this.setDataValue("users", value.split(",").sort().join(","));
+		}
+	}
+});
 
-// find conversation given two user Ids
+// find conversation given users(string) Ids
+Conversation.findConversation = async function (usersId) {
+	const newUsersId = usersId.split(",").sort().join(",");
+	const conversation = await Conversation.findOne({
+		where: {
+			users: newUsersId
+		}
+	});
 
-Conversation.findConversation = async function (user1Id, user2Id) {
-  const conversation = await Conversation.findOne({
-    where: {
-      user1Id: {
-        [Op.or]: [user1Id, user2Id],
-      },
-      user2Id: {
-        [Op.or]: [user1Id, user2Id],
-      },
-    },
-  });
-
-  // return conversation or null if it doesn't exist
-  return conversation;
+	// return conversation or null if it doesn't exist
+	return conversation;
 };
 
 module.exports = Conversation;

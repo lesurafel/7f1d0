@@ -29,7 +29,8 @@ const Chat = ({
   useEffect(() => {
     if (
       conversation.unreadMessages &&
-      openedChatUser.current === conversation.otherUser.id
+      openedChatUser.current === conversation.otherUser.id &&
+      !conversation.groupConversation
     ) {
       updateUnreadMessage(conversation);
     }
@@ -37,7 +38,7 @@ const Chat = ({
 
   const handleClick = async (conversation) => {
     openedChatUser.current = conversation.otherUser.id;
-    if (conversation.unreadMessages) {
+    if (conversation.unreadMessages && !conversation.groupConversation) {
       updateUnreadMessage(conversation);
     }
     await setActiveChat(conversation.otherUser.username);
