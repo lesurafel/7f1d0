@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-const GroupConversation = db.define("group_conversation", {
+const GroupConversation = db.define("groupConversation", {
 	conversationName: {
 		type: Sequelize.STRING,
 		allowNull: false

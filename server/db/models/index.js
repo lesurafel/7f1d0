@@ -1,24 +1,35 @@
 const Conversation = require("./conversation");
-const UserGroup = require("./userGroup");
+const UserToConversation = require("./userToConversation");
 const GroupConversation = require("./groupConversation");
 const User = require("./user");
 const Message = require("./message");
 
 // associations
 
-User.hasMany(UserGroup);
-Conversation.hasMany(UserGroup);
+User.hasMany(UserToConversation);
+User.belongsToMany(Conversation, {
+	through: "userToConversation",
+	as: "conversations",
+	foreignKey: "userId"
+});
+
+Conversation.hasMany(UserToConversation);
+Conversation.belongsToMany(User, {
+	through: "userToConversation",
+	as: "allUser",
+	foreignKey: "conversationId"
+});
+
 Conversation.hasOne(GroupConversation);
-UserGroup.belongsTo(User);
-UserGroup.belongsTo(Conversation);
 GroupConversation.belongsTo(Conversation);
-Message.belongsTo(Conversation);
+
 Conversation.hasMany(Message);
+Message.belongsTo(Conversation);
 
 module.exports = {
 	User,
 	Conversation,
 	GroupConversation,
-	UserGroup,
+	UserToConversation,
 	Message
 };

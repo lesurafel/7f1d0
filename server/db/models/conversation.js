@@ -4,18 +4,21 @@ const db = require("../db");
 const Message = require("./message");
 
 const Conversation = db.define("conversation", {
-	usersId: Sequelize.ARRAY(Sequelize.INTEGER)
+	users: {
+		type: Sequelize.STRING,
+		unique: true,
+		set(value) {
+			this.setDataValue("users", value.split(",").sort().join(","));
+		}
+	}
 });
 
-// find conversation given array of user Ids
-
-Conversation.findConversation = async function (userId) {
+// find conversation given users(string) Ids
+Conversation.findConversation = async function (usersId) {
+	const newUsersId = usersId.split(",").sort().join(",");
 	const conversation = await Conversation.findOne({
 		where: {
-			[Op.and]: [
-				{ usersId: { [Op.contains]: userId } },
-				{ usersId: { [Op.contained]: userId } }
-			]
+			users: newUsersId
 		}
 	});
 
